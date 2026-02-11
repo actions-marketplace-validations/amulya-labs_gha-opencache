@@ -1,6 +1,17 @@
 name: Compression Tuning Examples
 # Example: Different compression strategies for various use cases
-# Docs: https://github.com/rrl-personal-projects/actions-opencache#compression
+#
+# Storage options:
+# 1. Local filesystem (shown below):
+#    - Requires: self-hosted runners with persistent disk
+#    - Fastest, no external dependencies
+#
+# 2. S3/GCS backends (add storage-provider, s3-*/gcs-* inputs):
+#    - Works on: GitHub-hosted OR self-hosted runners
+#    - Custom storage backend (actions/cache doesn't support this)
+#
+# These examples show how to tune compression for different scenarios.
+# Docs: https://github.com/amulya-labs/gha-opencache#compression
 
 on:
   push:
@@ -10,12 +21,12 @@ on:
 jobs:
   # Auto compression (default) - detects zstd, falls back to gzip
   auto-compression:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # Use your self-hosted runner
     steps:
       - uses: actions/checkout@v4
 
       - name: Cache with auto compression
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: node_modules
           key: auto-${{ hashFiles('package-lock.json') }}
@@ -26,12 +37,12 @@ jobs:
 
   # Maximum compression - slower but smallest size
   max-compression:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
       - name: Cache with maximum compression
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: node_modules
           key: max-${{ hashFiles('package-lock.json') }}
@@ -43,12 +54,12 @@ jobs:
 
   # Fast compression - good for large caches
   fast-compression:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
       - name: Cache with fast compression
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: |
             node_modules
@@ -62,12 +73,12 @@ jobs:
 
   # No compression - fastest for small or pre-compressed data
   no-compression:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
       - name: Cache without compression
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: dist
           key: dist-${{ github.sha }}
@@ -78,12 +89,12 @@ jobs:
 
   # Gzip compression - maximum compatibility
   gzip-compression:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
       - name: Cache with gzip
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: ~/.cargo
           key: cargo-${{ hashFiles('Cargo.lock') }}

@@ -1,6 +1,18 @@
 name: Rust with Cargo Cache
 # Example: Caching Rust Cargo registry, index, and build artifacts
-# Docs: https://github.com/rrl-personal-projects/actions-opencache#examples
+#
+# Storage options:
+# 1. Local filesystem (shown below):
+#    - Requires: self-hosted runners with persistent disk
+#    - Fastest, no external dependencies
+#    - Cache stored at /srv/gha-cache/v1 (default)
+#
+# 2. S3/GCS backends (see s3-*.yml, gcs-*.yml):
+#    - Works on: GitHub-hosted OR self-hosted runners
+#    - Custom storage backend (actions/cache doesn't support this)
+#    - Shared cache across multiple runners
+#
+# Docs: https://github.com/amulya-labs/gha-opencache#examples
 
 on:
   push:
@@ -9,7 +21,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # Use your self-hosted runner (e.g., [self-hosted, linux])
 
     steps:
       - uses: actions/checkout@v4
@@ -18,21 +30,21 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Cache Cargo registry
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: ~/.cargo/registry
           key: cargo-registry-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
           restore-keys: cargo-registry-${{ runner.os }}-
 
       - name: Cache Cargo index
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: ~/.cargo/git
           key: cargo-git-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
           restore-keys: cargo-git-${{ runner.os }}-
 
       - name: Cache build artifacts
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: target
           key: cargo-build-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}

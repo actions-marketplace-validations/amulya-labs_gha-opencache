@@ -1,5 +1,12 @@
 # Example: Using Google Cloud Storage with Workload Identity (keyless authentication)
 #
+# GCS with Workload Identity works on BOTH GitHub-hosted and self-hosted runners.
+# Benefits over actions/cache:
+# - Custom storage backend (actions/cache only supports GitHub's cache service)
+# - Keyless authentication (no service account keys to manage)
+# - Automatic credential rotation and better security posture
+# - Cache shared across multiple runners
+#
 # Prerequisites:
 # 1. Create a GCS bucket: gsutil mb -p my-project gs://my-cache-bucket
 # 2. Set up Workload Identity Federation for GitHub Actions
@@ -22,7 +29,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Runner options:
+    # 1. GitHub-hosted (shown below): Common for cloud storage with Workload Identity
+    # 2. Self-hosted: Change to "self-hosted" if using self-hosted infrastructure
+    runs-on: ubuntu-latest  # or self-hosted for self-hosted runners
 
     # Required for Workload Identity
     permissions:
@@ -40,7 +50,7 @@ jobs:
           service_account: github-actions@my-project.iam.gserviceaccount.com
 
       # Cache node_modules using GCS with Workload Identity
-      - uses: rrl-personal-projects/actions-opencache@v1
+      - uses: amulya-labs/gha-opencache@v1
         with:
           path: node_modules
           key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}

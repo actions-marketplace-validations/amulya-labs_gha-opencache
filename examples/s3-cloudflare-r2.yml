@@ -1,6 +1,18 @@
 name: S3 Cache with Cloudflare R2
 # Example: Using Cloudflare R2 S3-compatible storage
-# Docs: https://github.com/rrl-personal-projects/actions-opencache#storage-backends
+#
+# Cloudflare R2 works on BOTH GitHub-hosted and self-hosted runners.
+# Benefits over actions/cache:
+# - Custom storage backend (actions/cache only supports GitHub's cache service)
+# - Low-cost storage with zero egress fees
+# - Cache shared across multiple runners
+# - Full control over retention and costs
+#
+# Runner options:
+# 1. GitHub-hosted (shown below): Common for cloud storage like R2
+# 2. Self-hosted: Change to "runs-on: self-hosted" if using self-hosted infrastructure
+#
+# Docs: https://github.com/amulya-labs/gha-opencache#storage-backends
 
 on:
   push:
@@ -9,7 +21,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # or self-hosted for self-hosted runners
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +32,7 @@ jobs:
           node-version: '20'
 
       - name: Cache with Cloudflare R2
-        uses: rrl-personal-projects/actions-opencache@v1
+        uses: amulya-labs/gha-opencache@v1
         with:
           path: |
             node_modules
