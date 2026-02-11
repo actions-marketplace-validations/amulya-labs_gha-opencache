@@ -192,11 +192,13 @@ restore-keys: python-
 | Method | Speed | Ratio | When to Use |
 |--------|-------|-------|-------------|
 | `auto` (default) | - | - | Detects zstd → falls back to gzip |
-| `zstd` | Fast | Excellent | Best for most cases |
+| `zstd` | Fast | Excellent | Best for most cases, supports frames requiring large decompression windows (when built with `--long=30`) |
 | `gzip` | Moderate | Good | Maximum compatibility |
 | `none` | Fastest | N/A | Pre-compressed files |
 
 **Levels:** zstd 1-19 (default: 3) • gzip 1-9 (default: 6)
+
+**Large cache support:** when built with zstd `--long=30`, decompression can use larger window sizes (up to ~1GB of memory) to handle frames that require large windows
 
 **Tuning:** Fast=`level: 1` • Best ratio=`level: 19` • Skip=`compression: none`
 
