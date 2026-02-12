@@ -28,10 +28,8 @@ git push origin v${NEW_VERSION}
 gh release create v${NEW_VERSION} --generate-notes --title "v${NEW_VERSION}"
 
 # Update floating major tag (e.g., v1 -> points to v1.0.1)
-git tag -d v${MAJOR_VERSION} 2>/dev/null
-git push origin :refs/tags/v${MAJOR_VERSION} 2>/dev/null
-git tag v${MAJOR_VERSION} v${NEW_VERSION}
-git push origin v${MAJOR_VERSION}
+git tag -f v${MAJOR_VERSION} v${NEW_VERSION}
+git push --force origin v${MAJOR_VERSION}
 
 # Verify
 gh release view v${NEW_VERSION}
@@ -74,9 +72,8 @@ git checkout -b hotfix/description vX.Y.Z
 
 **Tag already exists:**
 ```bash
-git tag -d vX.Y.Z
-git push origin :refs/tags/vX.Y.Z
-# Then recreate
+git tag -f vX.Y.Z
+git push --force origin vX.Y.Z
 ```
 
 **Delete a release:**
